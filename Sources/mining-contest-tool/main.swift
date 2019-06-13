@@ -2,7 +2,7 @@ import Foundation
 
 print("Hello, world!")
 
-guard let CKB_DIR = ProcessInfo.processInfo.environment[""] else {
+guard let CKB_DIR = ProcessInfo.processInfo.environment["CKB_DIR"] else {
     print("Error: No environment parameter \"CKB_DIR\".")
     exit(-1)
 }

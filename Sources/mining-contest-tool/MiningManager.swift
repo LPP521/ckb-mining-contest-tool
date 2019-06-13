@@ -8,8 +8,6 @@
 import Foundation
 
 class MiningManager {
-    static let shared = MiningManager()
-
     private(set) var minerProcess = [Process]()
     private(set) var ckbProcess: Process?
     private(set) var key: Key!
@@ -18,13 +16,6 @@ class MiningManager {
     let output: URL
     let workshopFolder: String
     let minerSavePath: URL
-
-    init() {
-        directory = URL(fileURLWithPath: "/Users/tekisen/Downloads/ckb_v0.13.0_x86_64-apple-darwin", isDirectory: true)
-        output = directory.appendingPathComponent("mining_log.txt")
-        workshopFolder = "ckb-testnet"
-        minerSavePath = directory.appendingPathComponent("keys.txt")
-    }
 
     init(directory: URL) {
         self.directory = directory
