@@ -31,12 +31,7 @@ class MiningManager {
 
         var isDirectory: ObjCBool = false
         if !FileManager.default.fileExists(atPath: directory.appendingPathComponent(workshopFolder).path, isDirectory: &isDirectory) || !isDirectory.boolValue {
-            let process = Process()
-            process.currentDirectoryPath = directory.path
-            process.launchPath = "/bin/sh"
-            process.arguments = ["-c", "./ckb init -C ckb-testnet --spec testnet"]
-            process.launch()
-            process.waitUntilExit()
+            Process.launch(for: "./ckb init -C ckb-testnet --spec testnet", directory: directory).waitUntilExit()
         }
 
         setupMiner()
@@ -71,17 +66,6 @@ class MiningManager {
         DispatchQueue.global().async {
             self.checkMiningOutput()
         }
-    }
-
-    func recordMiner() {
-        let text = key.encode()
-        if !FileManager.default.fileExists(atPath: minerSavePath.path) {
-            FileManager.default.createFile(atPath: minerSavePath.path, contents: nil, attributes: nil)
-        }
-        guard let handler = try? FileHandle(forWritingTo: minerSavePath) else { return }
-        handler.seekToEndOfFile()
-        handler.write(text.data(using: .utf8)!)
-        handler.write("\n".data(using: .utf8)!)
     }
 }
 
@@ -120,14 +104,10 @@ extension MiningManager {
 /// Run CKB
 extension MiningManager {
     func runCKB() {
-        let process = Process()
-        process.currentDirectoryPath = directory.appendingPathComponent(workshopFolder).path
-        process.launchPath = "/bin/sh"
-        process.arguments = ["-c", "../ckb run >> \(directory.appendingPathComponent("ckb_log.txt").path)"]
-        process.launch()
+        let shell = "../ckb run >> \(directory.appendingPathComponent("ckb_log.txt").path)"
+        ckbProcess = Process.launch(for: shell, directory: directory.appendingPathComponent(workshopFolder))
 
         Thread.sleep(forTimeInterval: 4)
-        ckbProcess = process
     }
 
     func stopCKB() {
@@ -141,12 +121,8 @@ extension MiningManager {
     func runMiner() {
         let count = 2
         for _ in 0..<count {
-            let process = Process()
-            process.currentDirectoryPath = directory.appendingPathComponent(workshopFolder).path
-            process.launchPath = "/bin/sh"
-            process.arguments = ["-c", "../ckb miner >> \(output.path)"]
-            process.launch()
-
+            let shell = "../ckb miner >> \(output.path)"
+            let process = Process.launch(for: shell, directory: directory.appendingPathComponent(workshopFolder))
             minerProcess.append(process)
         }
     }
@@ -159,5 +135,18 @@ extension MiningManager {
         minerProcess.removeAll()
 
         Thread.sleep(forTimeInterval: 4)
+    }
+}
+
+extension MiningManager {
+    func recordMiner() {
+        let text = key.encode()
+        if !FileManager.default.fileExists(atPath: minerSavePath.path) {
+            FileManager.default.createFile(atPath: minerSavePath.path, contents: nil, attributes: nil)
+        }
+        guard let handler = try? FileHandle(forWritingTo: minerSavePath) else { return }
+        handler.seekToEndOfFile()
+        handler.write(text.data(using: .utf8)!)
+        handler.write("\n".data(using: .utf8)!)
     }
 }
