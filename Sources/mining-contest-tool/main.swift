@@ -25,6 +25,7 @@ while true {
     let strData = String(data: inputData, encoding: String.Encoding.utf8)!
     let input = strData.trimmingCharacters(in: CharacterSet.newlines)
     if input.hasPrefix("q") || input.hasPrefix("Q") {
+        print("Exiting...")
         manager.stop()
         exit(0)
     }
