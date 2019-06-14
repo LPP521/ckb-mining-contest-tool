@@ -11,7 +11,7 @@ $ export CKB_DIR="$(pwd)"
 $ cd ../ && git clone https://github.com/cezres/ckb-mining-contest-tool && cd ./ckb-mining-contest-tool
 
 $ swift build
-$ ./.build/Debug/mining-contest-tool
+$ swift run
 ```
 
 
