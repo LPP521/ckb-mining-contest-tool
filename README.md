@@ -13,3 +13,6 @@ $ cd ../ && git clone https://github.com/cezres/ckb-mining-contest-tool && cd ./
 $ swift build
 $ ./.build/Debug/mining-contest-tool
 ```
+
+
+[Nervos CKB Testnet Mining Competition](https://mineyourownbusiness.nervos.org/)
